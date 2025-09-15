@@ -4,8 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,19 +17,20 @@ class DrawingPanel extends JPanel {
     // NOVO: Adiciona o gerenciador de comandos
     private final CommandManager commandManager = new CommandManager();
 
+    private ShapeFactory currentFactory = new EllipseFactory();
+
     DrawingPanel() {
         setBackground(Color.WHITE);
         setOpaque(true);
         setDoubleBuffered(true);
-
+        
         var mouse = new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1 && startDrag == null) {
                     int size = Math.max(Math.min(DEFAULT_SIZE, DEFAULT_SIZE), 10);
-                    Shape s =  new Ellipse2D.Double(e.getPoint().x, e.getPoint().y, size, size);
-                    //return new Rectangle2D.Double(e.getPoint().x, e.getPoint().y, Math.max(DEFAULT_SIZE, 10), Math.max(DEFAULT_SIZE, 10));
+                    Shape s = currentFactory.createShape(e.getPoint(), size);
+                    
                     commandManager.execute(new AddShapeCommand(s, shapes));
-
                     repaint();
                 }
             }
@@ -40,6 +39,9 @@ class DrawingPanel extends JPanel {
         addMouseMotionListener(mouse);
     }
 
+    public void setFactory(ShapeFactory factory) {
+        this.currentFactory = factory;
+    }
     
     public void undo() {
         commandManager.undo();

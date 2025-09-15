@@ -19,11 +19,20 @@ public class App {
             JButton undoButton = new JButton("Undo");
             JButton redoButton = new JButton("Redo");
 
+            JButton ellipseButton = new JButton("Elipse");
+            JButton rectangleButton = new JButton("Retângulo");
+
             undoButton.addActionListener(e -> panel.undo());
             redoButton.addActionListener(e -> panel.redo());
 
+            ellipseButton.addActionListener(e -> panel.setFactory(new EllipseFactory()));
+            rectangleButton.addActionListener(e -> panel.setFactory(new RectangleFactory()));
+
             toolBar.add(undoButton);
             toolBar.add(redoButton);
+            toolBar.addSeparator();
+            toolBar.add(ellipseButton);
+            toolBar.add(rectangleButton);
             toolBar.setFloatable(false);
 
             frame.setLayout(new BorderLayout());

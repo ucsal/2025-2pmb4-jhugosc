@@ -1,4 +1,3 @@
-
 package br.com.mariojp.figureeditor;
 
 import javax.swing.*;
@@ -17,8 +16,10 @@ class DrawingPanel extends JPanel {
     private final List<Shape> shapes = new ArrayList<>();
     private Point startDrag = null;
 
+    // NOVO: Adiciona o gerenciador de comandos
+    private final CommandManager commandManager = new CommandManager();
+
     DrawingPanel() {
-        
         setBackground(Color.WHITE);
         setOpaque(true);
         setDoubleBuffered(true);
@@ -29,14 +30,25 @@ class DrawingPanel extends JPanel {
                     int size = Math.max(Math.min(DEFAULT_SIZE, DEFAULT_SIZE), 10);
                     Shape s =  new Ellipse2D.Double(e.getPoint().x, e.getPoint().y, size, size);
                     //return new Rectangle2D.Double(e.getPoint().x, e.getPoint().y, Math.max(DEFAULT_SIZE, 10), Math.max(DEFAULT_SIZE, 10));
-                    shapes.add(s);
+                    commandManager.execute(new AddShapeCommand(s, shapes));
+
                     repaint();
                 }
             }
         };
         addMouseListener(mouse);        
         addMouseMotionListener(mouse);
+    }
 
+    
+    public void undo() {
+        commandManager.undo();
+        repaint();
+    }
+
+    public void redo() {
+        commandManager.redo();
+        repaint();
     }
 
     void clear() {
@@ -59,5 +71,4 @@ class DrawingPanel extends JPanel {
 
         g2.dispose();
     }
-
 }
